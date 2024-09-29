@@ -23,3 +23,9 @@ class MoveMapCamera extends MapPageEvent {
 
   MoveMapCamera(this.position);
 }
+
+class SearchByCEP extends MapPageEvent {
+  final String searchString;
+
+  SearchByCEP(this.searchString);
+}

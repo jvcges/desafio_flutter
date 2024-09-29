@@ -1,3 +1,5 @@
+import 'package:desafio_flutter/core/Theme/app_colors.dart';
+import 'package:easy_mask/easy_mask.dart';
 import 'package:flutter/material.dart';
 
 class AppSearchBar extends StatelessWidget {
@@ -26,6 +28,9 @@ class AppSearchBar extends StatelessWidget {
       ),
       child: TextField(
         controller: textController,
+        keyboardType: TextInputType.number,
+        cursorColor: AppColors.primaryColor,
+        inputFormatters: [TextInputMask(mask: "99999-999")],
         decoration: const InputDecoration(
           hintText: 'Buscar',
           border: InputBorder.none,
@@ -34,6 +39,15 @@ class AppSearchBar extends StatelessWidget {
         ),
         onChanged: (value) {
           searchFunction(value);
+        },
+        onTap: () {
+          if (textController.text.isEmpty) {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus &&
+                currentFocus.focusedChild != null) {
+              FocusManager.instance.primaryFocus!.unfocus();
+            }
+          }
         },
       ),
     );

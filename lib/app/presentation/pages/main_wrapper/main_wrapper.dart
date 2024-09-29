@@ -24,22 +24,28 @@ class _MainWrapperState extends State<MainWrapper> {
     return BlocSelector<MainWrapperBloc, MainWrapperState, int>(
       selector: (state) => state.index,
       builder: (context, state) {
-        return Scaffold(
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            child: pagesList[state],
-          ),
-          bottomNavigationBar: AppBottomNavigationBar(
-            onTapIndex: (value) {
-              wrapperBloc.add(ChangePage(index: value));
-            },
-            currentIndex: state,
+        return Material(
+          child: Column(
+            children: [
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                  child: pagesList[state],
+                ),
+              ),
+              AppBottomNavigationBar(
+                onTapIndex: (value) {
+                  wrapperBloc.add(ChangePage(index: value));
+                },
+                currentIndex: state,
+              ),
+            ],
           ),
         );
       },

@@ -18,6 +18,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   flutter_dotenv: ^5.1.0
   flutter_svg: ^2.0.10+1
+  easy_mask: ^2.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:desafio_flutter/shared/extensions/e_string.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,9 +10,10 @@ part 'map_page_state.dart';
 class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
   MapPageBloc()
       : super(
-          MapPageLoading(),
+          MapPageInitial(),
         ) {
     on<GetUserLocation>((event, emit) async {
+      if (state is! MapPageInitial) return;
       try {
         emit(MapPageLoading());
         final latlng = await _requestLocationPermission();
@@ -57,6 +59,40 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
         mapController?.moveCamera(CameraUpdate.newLatLng(event.position));
         emit(CurrentLocationState(
           mapController: mapController,
+          currentPosition: currentState.currentPosition,
+          mapMarkers: currentState.mapMarkers,
+        ));
+      }
+    });
+
+    on<SearchByCEP>((event, emit) {
+      final currentState = state;
+      if (currentState is CurrentLocationState) {
+        emit(SearchingLocationState(
+          searchString: event.searchString,
+          showFloatingButton: false,
+          mapController: currentState.mapController,
+          currentPosition: currentState.currentPosition,
+          mapMarkers: currentState.mapMarkers,
+        ));
+        return;
+      }
+
+      if (currentState is SearchingLocationState) {
+        if (event.searchString.isEmpty) {
+          emit(CurrentLocationState(
+            mapController: currentState.mapController,
+            currentPosition: currentState.currentPosition,
+            mapMarkers: currentState.mapMarkers,
+          ));
+          return;
+        }
+
+        emit(SearchingLocationState(
+          searchString: event.searchString,
+          showFloatingButton:
+              event.searchString.justNumbers().length == 8 ? true : false,
+          mapController: currentState.mapController,
           currentPosition: currentState.currentPosition,
           mapMarkers: currentState.mapMarkers,
         ));

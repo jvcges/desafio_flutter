@@ -15,18 +15,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => MainWrapperBloc(),
-          ),
-          BlocProvider(
-            create: (context) => MapPageBloc(),
-          ),
-        ],
-        child: const MainWrapper(),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus &&
+            currentFocus.focusedChild != null) {
+          FocusManager.instance.primaryFocus!.unfocus();
+        }
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => MainWrapperBloc(),
+            ),
+            BlocProvider(
+              create: (context) => MapPageBloc(),
+            ),
+          ],
+          child: const MainWrapper(),
+        ),
       ),
     );
   }
