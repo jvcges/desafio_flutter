@@ -1,5 +1,6 @@
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/main_wrapper.dart';
+import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,6 +21,9 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => MainWrapperBloc(),
+          ),
+          BlocProvider(
+            create: (context) => MapPageBloc(),
           ),
         ],
         child: const MainWrapper(),

@@ -4,10 +4,10 @@ import 'package:desafio_flutter/shared/extensions/e_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class CustomBottomNavigationBar extends StatelessWidget {
+class AppBottomNavigationBar extends StatelessWidget {
   final Function(int) onTapIndex;
   final int currentIndex;
-  const CustomBottomNavigationBar({
+  const AppBottomNavigationBar({
     super.key,
     required this.onTapIndex,
     required this.currentIndex,
@@ -25,7 +25,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               onTap: () {
                 onTapIndex(0);
               },
-              child: CBottomNavigationItem(
+              child: AppBottomNavigationItem(
                 isSelected: currentIndex == 0,
                 svgPath: AppIcons.mapPageIcon,
                 title: "Mapa",
@@ -36,7 +36,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                 onTap: () {
                   onTapIndex(1);
                 },
-                child: CBottomNavigationItem(
+                child: AppBottomNavigationItem(
                   isSelected: currentIndex == 1,
                   svgPath: AppIcons.savedLocationsPageIcon,
                   title: "Caderneta",
@@ -53,11 +53,11 @@ class CustomBottomNavigationBar extends StatelessWidget {
   }
 }
 
-class CBottomNavigationItem extends StatelessWidget {
+class AppBottomNavigationItem extends StatelessWidget {
   final bool isSelected;
   final String svgPath;
   final String title;
-  const CBottomNavigationItem({
+  const AppBottomNavigationItem({
     super.key,
     required this.isSelected,
     required this.svgPath,

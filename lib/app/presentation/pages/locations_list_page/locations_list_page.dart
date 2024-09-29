@@ -12,7 +12,7 @@ class _LocationsListPageState extends State<LocationsListPage> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        color: Colors.red,
+        color: Colors.white,
       ),
     );
   }

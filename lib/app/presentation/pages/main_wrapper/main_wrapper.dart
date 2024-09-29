@@ -1,4 +1,4 @@
-import 'package:desafio_flutter/app/presentation/components/custom_bottom_navigation_bar.dart';
+import 'package:desafio_flutter/app/presentation/components/app_bottom_navigation_bar.dart';
 import 'package:desafio_flutter/app/presentation/pages/locations_list_page/locations_list_page.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/map_page.dart';
@@ -35,7 +35,7 @@ class _MainWrapperState extends State<MainWrapper> {
             },
             child: pagesList[state],
           ),
-          bottomNavigationBar: CustomBottomNavigationBar(
+          bottomNavigationBar: AppBottomNavigationBar(
             onTapIndex: (value) {
               wrapperBloc.add(ChangePage(index: value));
             },
