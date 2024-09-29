@@ -1,8 +1,7 @@
+import 'package:desafio_flutter/app/presentation/components/custom_bottom_navigation_bar.dart';
 import 'package:desafio_flutter/app/presentation/pages/locations_list_page/locations_list_page.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/map_page.dart';
-import 'package:desafio_flutter/main.dart';
-import 'package:desafio_flutter/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +13,10 @@ class MainWrapper extends StatefulWidget {
 }
 
 class _MainWrapperState extends State<MainWrapper> {
+  List<Widget> pagesList = const [
+    MapPage(),
+    LocationsListPage(),
+  ];
   @override
   Widget build(BuildContext context) {
     final wrapperBloc = context.read<MainWrapperBloc>();
@@ -22,17 +25,21 @@ class _MainWrapperState extends State<MainWrapper> {
       selector: (state) => state.index,
       builder: (context, state) {
         return Scaffold(
-          body: state == 0 ? MapScreen() : const LocationsListPage(),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: state,
-            onTap: (value) {
+          body: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            child: pagesList[state],
+          ),
+          bottomNavigationBar: CustomBottomNavigationBar(
+            onTapIndex: (value) {
               wrapperBloc.add(ChangePage(index: value));
             },
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.list), label: 'Locations'),
-            ],
+            currentIndex: state,
           ),
         );
       },
