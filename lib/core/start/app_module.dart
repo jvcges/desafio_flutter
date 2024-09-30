@@ -1,9 +1,21 @@
 import 'package:desafio_flutter/app/data/datasources/get_address_by_cep/get_address_by_cep_datasource.dart';
+import 'package:desafio_flutter/app/data/datasources/get_saved_addresses/get_saved_addresses_datasource.dart';
+import 'package:desafio_flutter/app/data/datasources/save_address/save_address_datasource.dart';
 import 'package:desafio_flutter/app/data/repositories/get_address_by_cep/get_address_by_cep_imp_repository.dart';
+import 'package:desafio_flutter/app/data/repositories/get_saved_addresses/get_saved_addresses_imp_repository.dart';
+import 'package:desafio_flutter/app/data/repositories/save_address/save_address_imp_repository.dart';
 import 'package:desafio_flutter/app/domain/repositories/get_address_by_cep/get_address_by_cep_repository.dart';
+import 'package:desafio_flutter/app/domain/repositories/get_saved_addresses/get_saved_addresses_repository.dart';
+import 'package:desafio_flutter/app/domain/repositories/save_address/save_address_repository.dart';
 import 'package:desafio_flutter/app/domain/usecases/get_address_by_cep/get_address_by_cep_imp_usecase.dart';
 import 'package:desafio_flutter/app/domain/usecases/get_address_by_cep/get_address_by_cep_usecase.dart';
+import 'package:desafio_flutter/app/domain/usecases/get_saved_addresses/get_saved_addresses_imp_usecase.dart';
+import 'package:desafio_flutter/app/domain/usecases/get_saved_addresses/get_saved_addresses_usecase.dart';
+import 'package:desafio_flutter/app/domain/usecases/save_address/save_address_imp_usecase.dart';
+import 'package:desafio_flutter/app/domain/usecases/save_address/save_address_usecase.dart';
 import 'package:desafio_flutter/app/external/get_address_by_cep/get_address_by_cep_imp_datasource.dart';
+import 'package:desafio_flutter/app/external/get_saved_addresses/get_saved_addresses_imp_datasource.dart';
+import 'package:desafio_flutter/app/external/save_address/save_address_imp_datasource.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/main_wrapper.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
@@ -15,15 +27,36 @@ class AppModule extends Module {
   void binds(i) => [
         //Usecases
         i.addLazySingleton<GetAddressByCepUsecase>(
-            GetAddressByCepImpUsecase.new),
+          GetAddressByCepImpUsecase.new,
+        ),
+        i.addLazySingleton<SaveAddressUsecase>(
+          SaveAddressImpUsecase.new,
+        ),
+        i.addLazySingleton<GetSavedAddressesUsecase>(
+          GetSavedAddressesImpUsecase.new,
+        ),
 
         //Repositories
         i.addLazySingleton<GetAddressByCepRepository>(
-            GetAddressByCepImpRepository.new),
+          GetAddressByCepImpRepository.new,
+        ),
+        i.addLazySingleton<SaveAddressRepository>(
+          SaveAddressImpRepository.new,
+        ),
+        i.addLazySingleton<GetSavedAddressesRepository>(
+          GetSavedAddressesImpRepository.new,
+        ),
 
         //Datasources
         i.addLazySingleton<GetAddressByCepDatasource>(
-            GetAddressByCepImpDatasource.new),
+          GetAddressByCepImpDatasource.new,
+        ),
+        i.addLazySingleton<SaveAddressDatasource>(
+          SaveAddressImpDatasource.new,
+        ),
+        i.addLazySingleton<GetSavedAddressesDatasource>(
+          GetSavedAddressesImpDatasource.new,
+        ),
 
         //Clients http
         i.addLazySingleton(ViaCepClientHttps.new),

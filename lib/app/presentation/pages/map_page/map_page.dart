@@ -94,35 +94,36 @@ class _MapPageState extends State<MapPage> {
                 },
               ),
             if (state is SearchingLocationState) ...[
-              Container(),
               if (state.showFloatingButton)
-                Positioned(
-                  bottom: bottomPadding > kBottomNavigationBarHeight
-                      ? bottomPadding - kBottomNavigationBarHeight
-                      : 20,
-                  right: 20,
-                  child: Material(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(9999),
-                    child: InkWell(
+                Scaffold(
+                  resizeToAvoidBottomInset: false,
+                  floatingActionButton: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: bottomPadding / 2,
+                    ),
+                    child: Material(
+                      color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(9999),
-                      onTap: () {
-                        mapBloc.add(
-                          GetAddressByCep(
-                            state.searchString,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(9999),
+                        onTap: () {
+                          mapBloc.add(
+                            GetAddressByCep(
+                              state.searchString,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          height: 70,
+                          width: 70,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
                           ),
-                        );
-                      },
-                      child: Container(
-                        height: 70,
-                        width: 70,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.search,
-                          color: Colors.white,
-                          size: 30,
+                          child: const Icon(
+                            Icons.search,
+                            color: Colors.white,
+                            size: 30,
+                          ),
                         ),
                       ),
                     ),
@@ -132,16 +133,23 @@ class _MapPageState extends State<MapPage> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: SafeArea(
-                child: AppSearchBar(
-                  searchFunction: (value) {
-                    mapBloc.add(SearchByCEP(value));
-                  },
-                  onTap: () {
-                    if (bottomSheetController != null) {
-                      bottomSheetController!.close();
-                    }
-                  },
-                  textController: _searchController,
+                child: Column(
+                  children: [
+                    AppSearchBar(
+                      searchFunction: (value) {
+                        mapBloc.add(SearchByCEP(value));
+                      },
+                      onTap: () {
+                        if (bottomSheetController != null) {
+                          bottomSheetController!.close();
+                        }
+                      },
+                      textController: _searchController,
+                    ),
+                    if (state is SearchingLocationState) ...[
+//TODO - colocar lista com os listtiles
+                    ]
+                  ],
                 ),
               ),
             ),
