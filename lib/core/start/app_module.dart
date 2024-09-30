@@ -22,6 +22,7 @@ import 'package:desafio_flutter/app/presentation/pages/main_wrapper/main_wrapper
 import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/save_location_page/bloc/save_location_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/save_location_page/save_location_page.dart';
+import 'package:desafio_flutter/app/presentation/pages/splash_screen.dart';
 import 'package:desafio_flutter/core/Services/client_https/via_cep/via_cep_client_https.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -75,6 +76,10 @@ class AppModule extends Module {
   void routes(r) => [
         r.child(
           '/',
+          child: (context) => const SplashScreen(),
+        ),
+        r.child(
+          '/home',
           child: (context) => const MainWrapper(),
         ),
         r.child(

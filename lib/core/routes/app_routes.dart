@@ -15,6 +15,10 @@ class AppRouters {
     );
   }
 
+  static goToHomePage() {
+    return Modular.to.pushReplacementNamed('/home');
+  }
+
   static void pop<T extends Object>([T? result]) {
     if (result != null) {
       Modular.to.pop(result);

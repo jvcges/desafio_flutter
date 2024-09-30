@@ -7,7 +7,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'package:desafio_flutter/app/presentation/components/app_search_bar.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/components/save_address_bottom_sheet.dart';
