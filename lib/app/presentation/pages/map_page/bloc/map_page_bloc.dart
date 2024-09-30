@@ -135,13 +135,16 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
         try {
           emit(MapPageLoading());
           final result = await _getAddressByCepUsecase.call(event.cep);
+          final address = result?.copyWith(
+            latLng: newPosition,
+          );
           appLog(result);
           emit(
             CurrentLocationState(
               mapController: null,
               currentPosition: newPosition,
               mapMarkers: markers,
-              searchedAddress: result,
+              searchedAddress: address,
               showBottomSheet: true,
             ),
           );

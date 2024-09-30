@@ -47,6 +47,7 @@ class _MapPageState extends State<MapPage> {
             (_) => SaveAddressBottomSheet(
               cep: state.searchedAddress?.cep ?? '',
               address: state.searchedAddress?.address ?? '',
+              latLng: state.searchedAddress?.latLng,
               onAddressSaved: () {},
             ),
           );

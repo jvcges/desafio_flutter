@@ -1,16 +1,21 @@
+import 'package:desafio_flutter/app/domain/models/address_dto.dart';
 import 'package:desafio_flutter/app/presentation/components/app_elevated_button.dart';
+import 'package:desafio_flutter/core/routes/app_routes.dart';
 import 'package:desafio_flutter/shared/extensions/e_list_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SaveAddressBottomSheet extends StatelessWidget {
   final String cep;
   final String address;
+  final LatLng? latLng;
   final Function()? onAddressSaved;
   const SaveAddressBottomSheet({
     super.key,
     required this.cep,
     required this.address,
     this.onAddressSaved,
+    required this.latLng,
   });
 
   @override
@@ -80,7 +85,13 @@ class SaveAddressBottomSheet extends StatelessWidget {
             AppElevatedButton(
               text: "Salvar endereço",
               onPressed: () {
-                Navigator.pop(context);
+                AppRouters.goToSaveLocationPage(
+                  AddressDto(
+                    cep: cep,
+                    address: address,
+                    latLng: latLng,
+                  ),
+                );
               },
             )
           ],
