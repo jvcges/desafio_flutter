@@ -2,11 +2,15 @@ import 'package:desafio_flutter/app/domain/models/address_dto.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AppRouters {
-  static goToSaveLocationPage(AddressDto selectedAddress) {
+  static goToSaveLocationPage(
+    AddressDto selectedAddress, {
+    bool isEditing = false,
+  }) {
     return Modular.to.pushNamed(
       '/saveLocation',
       arguments: {
         'selectedAddress': selectedAddress,
+        'isEditing': isEditing,
       },
     );
   }

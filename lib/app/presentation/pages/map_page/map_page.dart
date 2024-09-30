@@ -109,7 +109,7 @@ class _MapPageState extends State<MapPage> {
                   resizeToAvoidBottomInset: false,
                   floatingActionButton: Padding(
                     padding: EdgeInsets.only(
-                      bottom: bottomPadding / 2,
+                      bottom: bottomPadding / 1.5,
                     ),
                     child: Material(
                       color: AppColors.primaryColor,

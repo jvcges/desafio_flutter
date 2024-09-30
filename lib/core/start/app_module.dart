@@ -16,6 +16,7 @@ import 'package:desafio_flutter/app/domain/usecases/save_address/save_address_us
 import 'package:desafio_flutter/app/external/get_address_by_cep/get_address_by_cep_imp_datasource.dart';
 import 'package:desafio_flutter/app/external/get_saved_addresses/get_saved_addresses_imp_datasource.dart';
 import 'package:desafio_flutter/app/external/save_address/save_address_imp_datasource.dart';
+import 'package:desafio_flutter/app/presentation/pages/locations_list_page/bloc/locations_list_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/main_wrapper.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
@@ -66,6 +67,7 @@ class AppModule extends Module {
         //Blocs
         i.addLazySingleton(MainWrapperBloc.new),
         i.addLazySingleton(MapPageBloc.new),
+        i.addLazySingleton(LocationsListBloc.new),
         i.add(SaveLocationBloc.new),
       ];
 
@@ -79,6 +81,7 @@ class AppModule extends Module {
           '/saveLocation',
           child: (context) => SaveLocationPage(
             selectedAddress: r.args.data['selectedAddress'],
+            isEditing: r.args.data['isEditing'],
           ),
         ),
       ];

@@ -1,6 +1,7 @@
 import 'package:desafio_flutter/app/domain/models/address_dto.dart';
 import 'package:desafio_flutter/app/presentation/components/app_elevated_button.dart';
 import 'package:desafio_flutter/app/presentation/components/app_text_field.dart';
+import 'package:desafio_flutter/app/presentation/pages/locations_list_page/bloc/locations_list_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/save_location_page/bloc/save_location_bloc.dart';
@@ -12,9 +13,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 class SaveLocationPage extends StatefulWidget {
   final AddressDto selectedAddress;
+  final bool isEditing;
   const SaveLocationPage({
     super.key,
     required this.selectedAddress,
+    required this.isEditing,
   });
 
   @override
@@ -32,6 +35,8 @@ class _SaveLocationPageState extends State<SaveLocationPage> {
   void initState() {
     _cepController.text = widget.selectedAddress.cep ?? '';
     _addressController.text = widget.selectedAddress.address ?? '';
+    _numberController.text = widget.selectedAddress.number?.toString() ?? '';
+    _complementController.text = widget.selectedAddress.complement ?? '';
     super.initState();
   }
 
@@ -47,12 +52,19 @@ class _SaveLocationPageState extends State<SaveLocationPage> {
                 content: Text('Endereço salvo com sucesso!'),
               ),
             );
-            final wrapperBloc = Modular.get<MainWrapperBloc>();
-            final mapBloc = Modular.get<MapPageBloc>();
-            //wrapperBloc.add(ChangePage(index: 1));
-            mapBloc.add(ResetBloc());
-            AppRouters.pop();
-            Navigator.pop(context);
+
+            if (widget.isEditing) {
+              final locationsBloc = Modular.get<LocationsListBloc>();
+              locationsBloc.add(ResetLocationsBloc());
+              AppRouters.pop();
+            } else {
+              final wrapperBloc = Modular.get<MainWrapperBloc>();
+              final mapBloc = Modular.get<MapPageBloc>();
+              wrapperBloc.add(ChangePage(index: 1));
+              mapBloc.add(ResetBloc());
+              AppRouters.pop();
+              Navigator.pop(context);
+            }
           }
 
           if (state is SaveLocationError) {

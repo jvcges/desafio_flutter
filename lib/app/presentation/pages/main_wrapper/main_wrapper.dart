@@ -1,4 +1,5 @@
 import 'package:desafio_flutter/app/presentation/components/app_bottom_navigation_bar.dart';
+import 'package:desafio_flutter/app/presentation/pages/locations_list_page/bloc/locations_list_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/locations_list_page/locations_list_page.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
@@ -33,6 +34,9 @@ class _MainWrapperState extends State<MainWrapper> {
         BlocProvider(
           create: (context) => Modular.get<MapPageBloc>(),
         ),
+        BlocProvider(
+          create: (context) => Modular.get<LocationsListBloc>(),
+        )
       ],
       child: BlocSelector<MainWrapperBloc, MainWrapperState, int>(
         selector: (state) => state.index,
