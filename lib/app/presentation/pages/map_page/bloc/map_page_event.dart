@@ -29,3 +29,9 @@ class SearchByCEP extends MapPageEvent {
 
   SearchByCEP(this.searchString);
 }
+
+class GetAddressByCep extends MapPageEvent {
+  final String cep;
+
+  GetAddressByCep(this.cep);
+}

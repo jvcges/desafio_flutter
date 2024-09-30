@@ -10,10 +10,12 @@ final class CurrentLocationState extends MapPageState {
   final GoogleMapController? mapController;
   final LatLng currentPosition;
   final Set<Marker> mapMarkers;
+  final AddressDto? searchedAddress;
   CurrentLocationState({
     required this.mapController,
     required this.currentPosition,
     required this.mapMarkers,
+    this.searchedAddress,
   });
 }
 
@@ -30,7 +32,6 @@ final class SearchingLocationState extends MapPageState {
   final GoogleMapController? mapController;
   final LatLng currentPosition;
   final Set<Marker> mapMarkers;
-
   SearchingLocationState({
     required this.mapController,
     required this.currentPosition,

@@ -1,4 +1,8 @@
+import 'package:desafio_flutter/app/domain/models/address_dto.dart';
+import 'package:desafio_flutter/app/domain/usecases/get_address_by_cep/get_address_by_cep_usecase.dart';
+import 'package:desafio_flutter/shared/exceptions/custom_exception.dart';
 import 'package:desafio_flutter/shared/extensions/e_string.dart';
+import 'package:desafio_flutter/shared/loggers/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,7 +12,8 @@ part 'map_page_event.dart';
 part 'map_page_state.dart';
 
 class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
-  MapPageBloc()
+  final GetAddressByCepUsecase _getAddressByCepUsecase;
+  MapPageBloc(this._getAddressByCepUsecase)
       : super(
           MapPageInitial(),
         ) {
@@ -96,6 +101,27 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
           currentPosition: currentState.currentPosition,
           mapMarkers: currentState.mapMarkers,
         ));
+      }
+    });
+
+    on<GetAddressByCep>((event, emit) async {
+      final currentState = state;
+      if (currentState is SearchingLocationState) {
+        try {
+          emit(MapPageLoading());
+          final result = await _getAddressByCepUsecase.call(event.cep);
+          appLog(result);
+          emit(
+            CurrentLocationState(
+              mapController: currentState.mapController,
+              currentPosition: currentState.currentPosition,
+              mapMarkers: currentState.mapMarkers,
+              searchedAddress: result,
+            ),
+          );
+        } on CustomException catch (e) {
+          emit(MapPageError(errorMessage: e.message ?? 'Ocorreu um erro!'));
+        }
       }
     });
   }

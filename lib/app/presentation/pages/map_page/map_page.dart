@@ -6,6 +6,7 @@ import 'package:desafio_flutter/core/Theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapPage extends StatefulWidget {
@@ -20,19 +21,16 @@ class _MapPageState extends State<MapPage> {
       ? dotenv.env['ANDROID_MAP_STYLE_KEY'] ?? ''
       : dotenv.env['IOS_MAP_STYLE_KEY'] ?? '';
   final _searchController = TextEditingController();
+  final mapBloc = Modular.get<MapPageBloc>();
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final mapBloc = context.read<MapPageBloc>();
-      mapBloc.add(GetUserLocation());
-    });
+    mapBloc.add(GetUserLocation());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final mapBloc = context.read<MapPageBloc>();
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
     return BlocBuilder<MapPageBloc, MapPageState>(
       builder: (context, state) {
@@ -85,7 +83,13 @@ class _MapPageState extends State<MapPage> {
                       : 20,
                   right: 20,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      mapBloc.add(
+                        GetAddressByCep(
+                          state.searchString,
+                        ),
+                      );
+                    },
                     child: Container(
                       height: 70,
                       width: 70,
