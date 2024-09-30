@@ -133,7 +133,14 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
 
     on<GetAddressByCep>((event, emit) async {
       final currentState = state;
-      List<Location> locations = await locationFromAddress(event.cep);
+      List<Location> locations = [];
+      try {
+        locations = await locationFromAddress(event.cep);
+      } catch (_) {
+        emit(MapPageError(errorMessage: 'CEP inválido!', addressList: []));
+        return;
+      }
+
       final location = locations.first;
       final newPosition = LatLng(
         location.latitude,

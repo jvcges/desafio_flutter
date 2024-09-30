@@ -61,6 +61,7 @@ class _MapPageState extends State<MapPage> {
               content: Text(state.errorMessage),
             ),
           );
+          mapBloc.add(ResetBloc());
         }
 
         if (state is MapPageInitial) {
