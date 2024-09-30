@@ -54,14 +54,12 @@ class LoggersInterceptors extends InterceptorsWrapper {
       tag: 'REQUEST',
       message: "${options.baseUrl}${options.path}",
     );
-    _log(
-      tag: 'REQUEST',
-      message: "Query: ${options.queryParameters}",
-    );
-    _log(
-      tag: 'REQUEST',
-      message: "Token: ${options.headers['Authorization']}",
-    );
+    if (options.queryParameters.isNotEmpty) {
+      _log(
+        tag: 'REQUEST',
+        message: "Query: ${options.queryParameters}",
+      );
+    }
     if (options.data != null) {
       _log(
         tag: 'REQUEST',

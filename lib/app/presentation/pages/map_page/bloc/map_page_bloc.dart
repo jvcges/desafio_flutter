@@ -4,6 +4,7 @@ import 'package:desafio_flutter/shared/exceptions/custom_exception.dart';
 import 'package:desafio_flutter/shared/extensions/e_string.dart';
 import 'package:desafio_flutter/shared/loggers/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -51,21 +52,23 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
           mapController: event.mapController,
           currentPosition: currentState.currentPosition,
           mapMarkers: currentState.mapMarkers,
+          searchedAddress: currentState.searchedAddress,
         ));
 
         add(MoveMapCamera(currentState.currentPosition));
       }
     });
 
-    on<MoveMapCamera>((event, emit) {
+    on<MoveMapCamera>((event, emit) async {
       final currentState = state;
       if (currentState is CurrentLocationState) {
         final mapController = currentState.mapController;
-        mapController?.moveCamera(CameraUpdate.newLatLng(event.position));
+        await mapController?.moveCamera(CameraUpdate.newLatLng(event.position));
         emit(CurrentLocationState(
           mapController: mapController,
           currentPosition: currentState.currentPosition,
           mapMarkers: currentState.mapMarkers,
+          searchedAddress: currentState.searchedAddress,
         ));
       }
     });
@@ -88,7 +91,7 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
           emit(CurrentLocationState(
             mapController: currentState.mapController,
             currentPosition: currentState.currentPosition,
-            mapMarkers: currentState.mapMarkers,
+            mapMarkers: {},
           ));
           return;
         }
@@ -106,17 +109,40 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
 
     on<GetAddressByCep>((event, emit) async {
       final currentState = state;
+      List<Location> locations = await locationFromAddress(event.cep);
+      final location = locations.first;
+      final newPosition = LatLng(
+        location.latitude,
+        location.longitude,
+      );
       if (currentState is SearchingLocationState) {
+        final markers = currentState.mapMarkers;
+        markers.clear();
+        markers.add(
+          Marker(
+            markerId: const MarkerId('searchedLocation'),
+            position: newPosition,
+            infoWindow: InfoWindow(
+              title: 'CEP: ${event.cep}',
+              snippet: 'Localização pesquisada',
+            ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueRed,
+            ),
+          ),
+        );
+
         try {
           emit(MapPageLoading());
           final result = await _getAddressByCepUsecase.call(event.cep);
           appLog(result);
           emit(
             CurrentLocationState(
-              mapController: currentState.mapController,
-              currentPosition: currentState.currentPosition,
-              mapMarkers: currentState.mapMarkers,
+              mapController: null,
+              currentPosition: newPosition,
+              mapMarkers: markers,
               searchedAddress: result,
+              showBottomSheet: true,
             ),
           );
         } on CustomException catch (e) {

@@ -11,11 +11,13 @@ final class CurrentLocationState extends MapPageState {
   final LatLng currentPosition;
   final Set<Marker> mapMarkers;
   final AddressDto? searchedAddress;
+  final bool showBottomSheet;
   CurrentLocationState({
     required this.mapController,
     required this.currentPosition,
     required this.mapMarkers,
     this.searchedAddress,
+    this.showBottomSheet = false,
   });
 }
 

@@ -15,40 +15,53 @@ class AppBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          children: [
-            Expanded(
-                child: InkWell(
-              onTap: () {
-                onTapIndex(0);
-              },
-              child: AppBottomNavigationItem(
-                isSelected: currentIndex == 0,
-                svgPath: AppIcons.mapPageIcon,
-                title: "Mapa",
-              ),
-            )),
-            Expanded(
-              child: InkWell(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFB4B4B4).withOpacity(0.2),
+            blurRadius: 4,
+            spreadRadius: 0,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                  child: InkWell(
                 onTap: () {
-                  onTapIndex(1);
+                  onTapIndex(0);
                 },
                 child: AppBottomNavigationItem(
-                  isSelected: currentIndex == 1,
-                  svgPath: AppIcons.savedLocationsPageIcon,
-                  title: "Caderneta",
+                  isSelected: currentIndex == 0,
+                  svgPath: AppIcons.mapPageIcon,
+                  title: "Mapa",
+                ),
+              )),
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    onTapIndex(1);
+                  },
+                  child: AppBottomNavigationItem(
+                    isSelected: currentIndex == 1,
+                    svgPath: AppIcons.savedLocationsPageIcon,
+                    title: "Caderneta",
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).padding.bottom,
-        ),
-      ],
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).padding.bottom,
+          ),
+        ],
+      ),
     );
   }
 }

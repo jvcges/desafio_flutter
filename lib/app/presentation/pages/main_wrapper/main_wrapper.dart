@@ -14,10 +14,14 @@ class MainWrapper extends StatefulWidget {
   State<MainWrapper> createState() => _MainWrapperState();
 }
 
+final _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class _MainWrapperState extends State<MainWrapper> {
-  List<Widget> pagesList = const [
-    MapPage(),
-    LocationsListPage(),
+  List<Widget> pagesList = [
+    MapPage(
+      scaffoldKey: _scaffoldKey,
+    ),
+    const LocationsListPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -34,28 +38,24 @@ class _MainWrapperState extends State<MainWrapper> {
         selector: (state) => state.index,
         builder: (context, state) {
           final wrapperBloc = Modular.get<MainWrapperBloc>();
-          return Material(
-            child: Column(
-              children: [
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: child,
-                      );
-                    },
-                    child: pagesList[state],
-                  ),
-                ),
-                AppBottomNavigationBar(
-                  onTapIndex: (value) {
-                    wrapperBloc.add(ChangePage(index: value));
-                  },
-                  currentIndex: state,
-                ),
-              ],
+          return Scaffold(
+            key: _scaffoldKey,
+            resizeToAvoidBottomInset: false,
+            body: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              child: pagesList[state],
+            ),
+            bottomNavigationBar: AppBottomNavigationBar(
+              onTapIndex: (value) {
+                wrapperBloc.add(ChangePage(index: value));
+              },
+              currentIndex: state,
             ),
           );
         },

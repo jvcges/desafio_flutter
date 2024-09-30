@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 
 class AppSearchBar extends StatelessWidget {
   final Function(String value) searchFunction;
+  final Function()? onTap;
   final TextEditingController textController;
   const AppSearchBar({
     super.key,
     required this.searchFunction,
     required this.textController,
+    this.onTap,
   });
 
   @override
@@ -41,6 +43,9 @@ class AppSearchBar extends StatelessWidget {
           searchFunction(value);
         },
         onTap: () {
+          if (onTap != null) {
+            onTap!();
+          }
           if (textController.text.isEmpty) {
             FocusScopeNode currentFocus = FocusScope.of(context);
             if (!currentFocus.hasPrimaryFocus &&
