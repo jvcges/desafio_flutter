@@ -1,5 +1,6 @@
 import 'package:desafio_flutter/app/domain/models/address_dto.dart';
 import 'package:desafio_flutter/app/domain/usecases/get_address_by_cep/get_address_by_cep_usecase.dart';
+import 'package:desafio_flutter/app/domain/usecases/get_saved_addresses/get_saved_addresses_usecase.dart';
 import 'package:desafio_flutter/shared/exceptions/custom_exception.dart';
 import 'package:desafio_flutter/shared/extensions/e_string.dart';
 import 'package:desafio_flutter/shared/loggers/logger.dart';
@@ -14,18 +15,22 @@ part 'map_page_state.dart';
 
 class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
   final GetAddressByCepUsecase _getAddressByCepUsecase;
-  MapPageBloc(this._getAddressByCepUsecase)
-      : super(
-          MapPageInitial(),
+  final GetSavedAddressesUsecase _getSavedAddressesUsecase;
+  MapPageBloc(
+    this._getAddressByCepUsecase,
+    this._getSavedAddressesUsecase,
+  ) : super(
+          MapPageInitial(addressList: []),
         ) {
     on<GetUserLocation>((event, emit) async {
       if (state is! MapPageInitial) return;
       try {
-        emit(MapPageLoading());
+        emit(MapPageLoading(addressList: state.addressList));
         final latlng = await _requestLocationPermission();
 
         if (latlng == null) {
           emit(MapPageError(
+            addressList: state.addressList,
             errorMessage: "Ocorreu um erro ao buscar sua localização atual!",
           ));
           return;
@@ -35,11 +40,15 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
           CurrentLocationState(
             mapController: event.mapController,
             currentPosition: latlng,
+            addressList: state.addressList,
             mapMarkers: {},
           ),
         );
+
+        add(GetAddressesList());
       } catch (_) {
         emit(MapPageError(
+          addressList: state.addressList,
           errorMessage: "Ocorreu um erro ao buscar sua localização atual!",
         ));
       }
@@ -49,6 +58,7 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
       final currentState = state;
       if (currentState is CurrentLocationState) {
         emit(CurrentLocationState(
+          addressList: state.addressList,
           mapController: event.mapController,
           currentPosition: currentState.currentPosition,
           mapMarkers: currentState.mapMarkers,
@@ -61,10 +71,12 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
 
     on<MoveMapCamera>((event, emit) async {
       final currentState = state;
+
       if (currentState is CurrentLocationState) {
         final mapController = currentState.mapController;
         await mapController?.moveCamera(CameraUpdate.newLatLng(event.position));
         emit(CurrentLocationState(
+          addressList: state.addressList,
           mapController: mapController,
           currentPosition: currentState.currentPosition,
           mapMarkers: currentState.mapMarkers,
@@ -75,8 +87,17 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
 
     on<SearchByCEP>((event, emit) {
       final currentState = state;
+      final filteredList = state.addressList.where(
+        (element) =>
+            element.cep != null &&
+            element.cep!
+                .justNumbers()
+                .contains(event.searchString.justNumbers()),
+      );
       if (currentState is CurrentLocationState) {
         emit(SearchingLocationState(
+          addressList: state.addressList,
+          filteredList: filteredList.toList(),
           searchString: event.searchString,
           showFloatingButton: false,
           mapController: currentState.mapController,
@@ -89,6 +110,7 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
       if (currentState is SearchingLocationState) {
         if (event.searchString.isEmpty) {
           emit(CurrentLocationState(
+            addressList: state.addressList,
             mapController: currentState.mapController,
             currentPosition: currentState.currentPosition,
             mapMarkers: {},
@@ -97,6 +119,8 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
         }
 
         emit(SearchingLocationState(
+          filteredList: filteredList.toList(),
+          addressList: state.addressList,
           searchString: event.searchString,
           showFloatingButton:
               event.searchString.justNumbers().length == 8 ? true : false,
@@ -133,7 +157,9 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
         );
 
         try {
-          emit(MapPageLoading());
+          emit(MapPageLoading(
+            addressList: state.addressList,
+          ));
           final result = await _getAddressByCepUsecase.call(event.cep);
           final address = result?.copyWith(
             latLng: newPosition,
@@ -141,6 +167,7 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
           appLog(result);
           emit(
             CurrentLocationState(
+              addressList: state.addressList,
               mapController: null,
               currentPosition: newPosition,
               mapMarkers: markers,
@@ -149,9 +176,60 @@ class MapPageBloc extends Bloc<MapPageEvent, MapPageState> {
             ),
           );
         } on CustomException catch (e) {
-          emit(MapPageError(errorMessage: e.message ?? 'Ocorreu um erro!'));
+          emit(MapPageError(
+            errorMessage: e.message ?? 'Ocorreu um erro!',
+            addressList: state.addressList,
+          ));
         }
       }
+    });
+
+    on<GetAddressesList>((event, emit) async {
+      final currentState = state;
+      if (currentState is! CurrentLocationState) return;
+      try {
+        final list = await _getSavedAddressesUsecase();
+        emit(CurrentLocationState(
+          mapController: currentState.mapController,
+          currentPosition: currentState.currentPosition,
+          mapMarkers: currentState.mapMarkers,
+          addressList: list,
+        ));
+      } catch (_) {}
+    });
+
+    on<MoveToSavedAddress>((event, emit) async {
+      final currentState = state;
+      if (currentState is SearchingLocationState) {
+        final markers = currentState.mapMarkers;
+        markers.clear();
+        markers.add(
+          Marker(
+            markerId: const MarkerId('searchedLocation'),
+            position: event.newPosition,
+            infoWindow: InfoWindow(
+              title: 'CEP: ${event.cep}',
+              snippet: 'Localização pesquisada',
+            ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueRed,
+            ),
+          ),
+        );
+
+        emit(
+          CurrentLocationState(
+            addressList: state.addressList,
+            mapController: null,
+            currentPosition: event.newPosition,
+            mapMarkers: markers,
+          ),
+        );
+      }
+    });
+
+    on<ResetBloc>((event, emit) {
+      emit(MapPageInitial(addressList: []));
     });
   }
 }

@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:desafio_flutter/shared/constants/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:desafio_flutter/app/presentation/components/app_search_bar.dart';
@@ -52,16 +54,23 @@ class _MapPageState extends State<MapPage> {
             ),
           );
         }
+
+        if (state is MapPageError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage),
+            ),
+          );
+        }
+
+        if (state is MapPageInitial) {
+          mapBloc.add(GetUserLocation());
+        }
       },
       builder: (context, state) {
         if (state is MapPageLoading || state is MapPageInitial) {
           return const Center(
             child: CircularProgressIndicator(),
-          );
-        }
-        if (state is MapPageError) {
-          return Center(
-            child: Text(state.errorMessage),
           );
         }
         return Stack(
@@ -148,7 +157,53 @@ class _MapPageState extends State<MapPage> {
                       textController: _searchController,
                     ),
                     if (state is SearchingLocationState) ...[
-//TODO - colocar lista com os listtiles
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      ...state.filteredList.map(
+                        (e) => Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              if (e.cep != null && e.latLng != null) {
+                                mapBloc.add(
+                                  MoveToSavedAddress(
+                                    e.latLng!,
+                                    e.cep!,
+                                  ),
+                                );
+                              }
+                            },
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: SvgPicture.asset(AppIcons.mapMarker),
+                                  title: Text(
+                                    e.cep ?? '',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20,
+                                      color: Color(0xFF141514),
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    e.address ?? '',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                      letterSpacing: 0.25,
+                                      color: Color(0xFF49454F),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  minTileHeight: 76,
+                                ),
+                                const Divider(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ]
                   ],
                 ),

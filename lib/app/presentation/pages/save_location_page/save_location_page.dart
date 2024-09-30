@@ -2,6 +2,7 @@ import 'package:desafio_flutter/app/domain/models/address_dto.dart';
 import 'package:desafio_flutter/app/presentation/components/app_elevated_button.dart';
 import 'package:desafio_flutter/app/presentation/components/app_text_field.dart';
 import 'package:desafio_flutter/app/presentation/pages/main_wrapper/bloc/main_wrapper_bloc.dart';
+import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
 import 'package:desafio_flutter/app/presentation/pages/save_location_page/bloc/save_location_bloc.dart';
 import 'package:desafio_flutter/core/routes/app_routes.dart';
 import 'package:desafio_flutter/shared/extensions/e_list_widget.dart';
@@ -47,7 +48,9 @@ class _SaveLocationPageState extends State<SaveLocationPage> {
               ),
             );
             final wrapperBloc = Modular.get<MainWrapperBloc>();
-            wrapperBloc.add(ChangePage(index: 1));
+            final mapBloc = Modular.get<MapPageBloc>();
+            //wrapperBloc.add(ChangePage(index: 1));
+            mapBloc.add(ResetBloc());
             AppRouters.pop();
             Navigator.pop(context);
           }

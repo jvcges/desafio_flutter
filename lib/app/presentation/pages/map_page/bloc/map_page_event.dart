@@ -35,3 +35,17 @@ class GetAddressByCep extends MapPageEvent {
 
   GetAddressByCep(this.cep);
 }
+
+class ResetBloc extends MapPageEvent {}
+
+class GetAddressesList extends MapPageEvent {}
+
+class MoveToSavedAddress extends MapPageEvent {
+  final LatLng newPosition;
+  final String cep;
+
+  MoveToSavedAddress(
+    this.newPosition,
+    this.cep,
+  );
+}
