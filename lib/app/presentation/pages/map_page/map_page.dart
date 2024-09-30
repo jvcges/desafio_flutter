@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:desafio_flutter/app/presentation/components/app_search_bar.dart';
 import 'package:desafio_flutter/app/presentation/pages/map_page/bloc/map_page_bloc.dart';
 import 'package:desafio_flutter/core/Theme/app_colors.dart';
@@ -14,7 +16,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  String styleKey = dotenv.env['IOS_MAP_STYLE_KEY'] ?? '';
+  String styleKey = Platform.isAndroid
+      ? dotenv.env['ANDROID_MAP_STYLE_KEY'] ?? ''
+      : dotenv.env['IOS_MAP_STYLE_KEY'] ?? '';
   final _searchController = TextEditingController();
 
   @override
@@ -78,7 +82,7 @@ class _MapPageState extends State<MapPage> {
                 Positioned(
                   bottom: bottomPadding > kBottomNavigationBarHeight
                       ? bottomPadding - kBottomNavigationBarHeight
-                      : 0,
+                      : 20,
                   right: 20,
                   child: InkWell(
                     onTap: () {},
